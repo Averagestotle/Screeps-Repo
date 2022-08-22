@@ -16,43 +16,113 @@ module.exports.loop = function () {
             console.log('Clearing non-existing creep memory:', name);
         }
     }
+
+    var sourceNumber = 0;
+    var resourceCapcity = Game.rooms['sim'].energyCapacityAvailable;
+    var assignedSourceHarvesters = _.filter(Game.creeps, (creep) => creep.memory.sourceAssigned == 0);
+
+    if (assignedSourceHarvesters < 2) {
+        sourceNumber = 0;
+        
+    }
+    else {
+        sourceNumber = 1;
+    }
     
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
-    
-        if(harvesters.length < harvesterMaxLimit) {
+
+        if(harvesters.length < 4) {
             var newName = 'Harvester' + Game.time;
-            //console.log('Spawning new harvester: ' + newName);
-            Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
-                {memory: {role: 'harvester', sourceAssigned: 0}});
+            var roleName = 'harvester';
+
+            if (resourceCapcity <= 350) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 400) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 500) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }            
+            //console.log('Spawning new harvester: ' + newName);            
         }
-        
-    var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     
-        if(builders.length < builderMaxLimit) {
+    if (harvesters.length > 1) {    
+        var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
+    
+        if(builders.length < 2) {
             var newName = 'Builder' + Game.time;
+            var roleName = 'builder';
             //console.log('Spawning new harvester: ' + newName);
-            Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
-                {memory: {role: 'builder'}});
+
+            if (resourceCapcity <= 350) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 400) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 500) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            //Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
+            //    {memory: {role: roleName}});
         }
         
-    var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+        var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
     
-        if(upgraders.length < upgraderMaxLimit) {
+        if(upgraders.length < 1) {
             var newName = 'Upgrader' + Game.time;
             //console.log('Spawning new harvester: ' + newName);
-            Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
-                {memory: {role: 'upgrader'}});
+
+            if (resourceCapcity <= 350) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 400) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 500) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
         }
         
-    var utilities = _.filter(Game.creeps, (creep) => creep.memory.role == 'utilities');
+        var utilities = _.filter(Game.creeps, (creep) => creep.memory.role == 'utilities');
     
-        if(utilities.length < utilitiesMaxLimit) {
+        if(utilities.length < 1) {
             var newName = 'Utility' + Game.time;
             //console.log('Spawning new harvester: ' + newName);
-            Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
-                {memory: {role: 'utilities'}});
+            
+            if (resourceCapcity <= 350) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 400) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
+
+            if (resourceCapcity >= 500) { 
+                Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
+                {memory: {role: roleName, sourceAssigned: sourceNumber}}); 
+            }
         }    
-        
+    }   
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -69,4 +139,6 @@ module.exports.loop = function () {
             roleUtilities.run(creep);
         }
     }
+    console.log('Room has '+Game.rooms['sim'].energyAvailable +' energy available');
+    console.log('Room has '+Game.rooms['sim'].energyCapacityAvailable+' energy allowable');
 }

@@ -6,12 +6,21 @@ var roleHarvester = {
     run: function(creep) {
 	    if(creep.store.getFreeCapacity() > 0) {
             var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
+             var assignedSource = creep.memory.sourceAssigned;
+            if(creep.harvest(sources[assignedSource]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(sources[assignedSource], {visualizePathStyle: {stroke: '#ffaa00'}});
             }
         }
         else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
+            const spawnTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_EXTENSION ||
+                            structure.structureType == STRUCTURE_SPAWN) && 
+                            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                }
+            });
+
+            const storageTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION ||
                                 structure.structureType == STRUCTURE_SPAWN ||
@@ -20,14 +29,19 @@ var roleHarvester = {
                                 structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                     }
             });
-            if(targets.length > 0) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+            if(spawnTarget == null && storageTarget != null) {
+                if(creep.transfer(storageTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(storageTarget, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
-            if(targets.length == 0){
-                roleBuilder.run(creep);
+            else {
+                if(creep.transfer(spawnTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(spawnTarget, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
             }
+            /* if(storageTarget != null){
+                roleBuilder.run(creep);
+            } */
         }
 	}
 };
